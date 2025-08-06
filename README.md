@@ -2,6 +2,8 @@
 
 A tiny and simple Node.js logger that allows you to automatically write all logs to a file, the option for console output, and log levels
 
+This logger comes with bare runtime compatibility.
+
 ## Installation
 
 npm install @hopets/logger
