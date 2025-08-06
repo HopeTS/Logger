@@ -17,14 +17,14 @@ class Logger {
   }
 
   /**
-   * DEBUG - intended for logging detailed information about Sister and for
+   * DEBUG - intended for logging detailed information and for
    * debugging.
    */
   debug(...message) {
     this.#log("DEBUG", ...message);
   }
 
-  /** INFO - Provides information on the Sister's normal operation. */
+  /** INFO - Provides information on normal operation. */
   info(...message) {
     this.#log("INFO", ...message);
   }
@@ -34,7 +34,7 @@ class Logger {
     this.#log("WARN", ...message);
   }
 
-  /** ERROR - Indicates an error that may cause the Sister to fail. */
+  /** ERROR - Indicates an error that may cause the process to fail. */
   error(...message) {
     this.#log("ERROR", ...message);
   }
