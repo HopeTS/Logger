@@ -1,0 +1,33 @@
+{
+  "name": "@hopets/logger",
+  "version": "1.0.0",
+  "description": "A tiny Node.js Logger with optional file+console output",
+  "main": "index.js",
+  "type": "module",
+  "keywords": [
+    "logger",
+    "logging",
+    "nodejs",
+    "pear",
+    "bare"
+  ],
+  "author": "Jenna Baudelaire (GitHub HopeTS) <jennabaudelaire@pm.me>",
+  "license": "AGPL-3.0-only",
+  "imports": {
+    "fs": {
+      "bare": "bare-fs",
+      "default": "fs"
+    },
+    "fs/*": {
+      "bare": "bare-fs/*",
+      "default": "fs/*"
+    }
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "dependencies": {
+    "bare-fs": "^4.1.6"
+  }
+}
