@@ -1,19 +1,39 @@
 import fs from "fs";
 
+/** Types of log messages */
+export const LOG_TYPES = {
+  DEBUG: "DEBUG",
+  INFO: "INFO",
+  WARN: "WARN",
+  ERROR: "ERROR",
+};
+
+/** Severity levels */
+export const LOG_LEVELS = {
+  DEBUG: 0,
+  INFO: 1,
+  WARN: 2,
+  ERROR: 3,
+};
+
 /**
  * Node.js that allows for monitoring of verbose debugging
  * information and recording of log data to a given file
- *
- * @param {Object} [opts] - Configuration options
- * @param {boolean} [logToFile] - Log to file flag
- * @param {boolean} [logFilePath] - Log file path
- * @param {boolean} [logToConsole] - Log to console flag
  */
 class Logger {
-  constructor({ logToFile = false, logToConsole = false, logFilePath }) {
+  /**
+   *
+   * @param {Object} [opts] - Configuration options
+   * @param {boolean} [logToFile] - Log to file flag
+   * @param {boolean} [logFilePath] - Log file path
+   * @param {boolean} [logToConsole] - Log to console flag
+   * @param {LOG_LEVELS} [level] - Log level
+   */
+  constructor({ logToFile = false, logToConsole = false, logFilePath, level }) {
     this.logToFile = logToFile || false;
     this.logToConsole = logToConsole || false;
     this.logFilePath = logFilePath || undefined;
+    this.level = level || LOG_LEVELS.INFO;
   }
 
   /**
@@ -21,21 +41,29 @@ class Logger {
    * debugging.
    */
   debug(...message) {
+    const level = LOG_LEVELS.DEBUG;
+    if (this.level > level) return;
     this.#log("DEBUG", ...message);
   }
 
   /** INFO - Provides information on normal operation. */
   info(...message) {
+    const level = LOG_LEVELS.INFO;
+    if (this.level > level) return;
     this.#log("INFO", ...message);
   }
 
   /** WARN - Notifies of potential issues that may lead to errors. */
   warn(...message) {
+    const level = LOG_LEVELS.WARN;
+    if (this.level > level) return;
     this.#log("WARN", ...message);
   }
 
   /** ERROR - Indicates an error that may cause the process to fail. */
   error(...message) {
+    const level = LOG_LEVELS.ERROR;
+    if (this.level > level) return;
     this.#log("ERROR", ...message);
   }
 
