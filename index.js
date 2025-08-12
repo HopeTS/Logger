@@ -33,7 +33,7 @@ class Logger {
     this.logToFile = logToFile || false;
     this.logToConsole = logToConsole || false;
     this.logFilePath = logFilePath || undefined;
-    this.level = level || LOG_LEVELS.INFO;
+    this.level = level === undefined ? LOG_LEVELS.INFO : level;
   }
 
   /**
