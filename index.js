@@ -24,16 +24,35 @@ class Logger {
   /**
    *
    * @param {Object} [opts] - Configuration options
-   * @param {boolean} [logToFile] - Log to file flag
-   * @param {boolean} [logFilePath] - Log file path
-   * @param {boolean} [logToConsole] - Log to console flag
-   * @param {LOG_LEVELS} [level] - Log level
+   * @param {boolean} [opts.logToFile] - Log to file flag
+   * @param {boolean} [opts.logFilePath] - Log file path
+   * @param {boolean} [opts.logToConsole] - Log to console flag
+   * @param {LOG_LEVELS} [opts.level] - Log level
+   * @param {boolean} [opts.clearFile] - Clear log file on initialization
    */
-  constructor({ logToFile = false, logToConsole = false, logFilePath, level }) {
+  constructor({
+    logToFile = false,
+    logToConsole = false,
+    logFilePath,
+    level,
+    clearFile = false,
+  }) {
     this.logToFile = logToFile || false;
     this.logToConsole = logToConsole || false;
     this.logFilePath = logFilePath || undefined;
     this.level = level === undefined ? LOG_LEVELS.INFO : level;
+    this.clearFile = clearFile;
+    this.cb = {};
+
+    // Clear file if specified
+    if (this.logToFile && this.logFilePath) {
+      if (fs.existsSync(this.logFilePath)) {
+        fs.unlinkSync(this.logFilePath);
+      }
+      if (this.clearFile) {
+        fs.writeFileSync(this.logFilePath, "");
+      }
+    }
   }
 
   /**
@@ -41,6 +60,7 @@ class Logger {
    * debugging.
    */
   debug(...message) {
+    if (this.cb[LOG_TYPES.DEBUG]) this.cb[LOG_TYPES.DEBUG](...message);
     const level = LOG_LEVELS.DEBUG;
     if (this.level > level) return;
     this.#log("DEBUG", ...message);
@@ -48,6 +68,7 @@ class Logger {
 
   /** INFO - Provides information on normal operation. */
   info(...message) {
+    if (this.cb[LOG_TYPES.INFO]) this.cb[LOG_TYPES.INFO](...message);
     const level = LOG_LEVELS.INFO;
     if (this.level > level) return;
     this.#log("INFO", ...message);
@@ -55,6 +76,7 @@ class Logger {
 
   /** WARN - Notifies of potential issues that may lead to errors. */
   warn(...message) {
+    if (this.cb[LOG_TYPES.WARN]) this.cb[LOG_TYPES.WARN](...message);
     const level = LOG_LEVELS.WARN;
     if (this.level > level) return;
     this.#log("WARN", ...message);
@@ -62,9 +84,28 @@ class Logger {
 
   /** ERROR - Indicates an error that may cause the process to fail. */
   error(...message) {
+    if (this.cb[LOG_TYPES.ERROR]) this.cb[LOG_TYPES.ERROR](...message);
     const level = LOG_LEVELS.ERROR;
     if (this.level > level) return;
     this.#log("ERROR", ...message);
+  }
+
+  /**
+   * Given a log level, add a callback function to run when that log level is
+   * called.
+   *
+   * @param {LOG_LEVELS} level - The log level to add the callback for
+   * @param {Function} cb - The callback function to run when the log level is
+   *  called. The callback will receive the same arguments as the log function.
+   *  (...message)
+   *
+   * @returns {void}
+   */
+  on(level, cb) {
+    if (!Object.values(LOG_TYPES).includes(level)) return;
+    if (typeof cb !== "function") return;
+
+    this.cb[level] = cb;
   }
 
   /** Log function */
